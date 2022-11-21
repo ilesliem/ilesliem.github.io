@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Remote Desktop Control</title>
+  <link rel="stylesheet" href="./assets/bootstrap.min.css">
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <script src="./assets/jquery-3.4.1.min.js"></script>
+
+<!--
+  This page interacts with the Agora Voice Call for Web Next Generation SDK to easily create Video Call
+  functionality in a Web page.
+
+  This HTML page imports the next generation Agora Video SDK for Web from
+  https://download.agora.io/sdk/release/AgoraRTC_N.js and local functionality from geoFencing.js.
+
+  The form in this page passes data and actions input by the user to geoFencing.js. basicVideoCall
+  creates an AgoraRTC client which adds and and removes local and remote users to a specific channel.
+-->
+
+<!--
+  Create the banner at the top of the page.
+-->
+<div class="container-fluid banner">
+  <p class="banner-text">Remote Desktop Control</p>
+</div>
+
+<!--
+  When a user tries to join a Video Call without supplying an AccessToken, this button
+  calls #success-alert in geoFencing.js. #success-alert refreshes this page with the
+  user information.
+-->
+<div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Congratulations!</strong><span> You can invite others join this channel by click </span><a href="" target="_blank">here</a>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!--
+  When a user successfully joins a Video Call channel with an AccessToken, this section displays
+  a banner with a close button.
+-->
+<div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Congratulations!</strong><span> Joined room successfully. </span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!--
+  When a user successfully joins a Video Call channel with an AccessToken, this section displays
+  a banner with a close button.
+-->
+<div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Congratulations!</strong><span> Joined room successfully. </span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="container">
+
+  <!--
+    Input fields so the user can securely join a Video Call channel.
+  -->
+  <form id="join-form">
+    <div class="row join-info-group" hidden>
+      <div class="col-sm">
+        <p class="join-info-text">APP ID</p>
+        <input id="appid" type="text" placeholder="Enter the appid" required>
+      </div>
+      <div class="col-sm">
+        <p class="join-info-text">Token(optional)</p>
+        <input id="token" type="text" placeholder="Enter the app token">
+      </div>
+      <div class="col-sm">
+        <p class="join-info-text">Channel Name</p>
+        <input id="channel" type="text" placeholder="Enter the channel name" required>
+      </div>
+      <div class="col-sm">
+        <p class="join-info-text">User ID(optional)</p>
+        <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
+      </div>
+    </div>
+
+    <!--
+      Join or leave a Video Call channel.
+    -->
+    <div class="button-group">
+      <button id="join" type="submit" class="btn btn-primary btn-sm">Join</button>
+      <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+      <button id="listen" type="button" class="btn btn-primary btn-sm" disabled>Listen Mouse</button>
+
+    </div>
+  </form>
+
+  <script type="text/javascript">
+    function stringToUint8Array(str){
+      var arr = [];
+      for (var i = 0, j = str.length; i < j; ++i) {
+        arr.push(str.charCodeAt(i));
+      }
+    
+      var tmpUint8Array = new Uint8Array(arr);
+      return tmpUint8Array
+    }
+
+    $("#appid")[0].value = '5c303eba64ae45369aee32cbe2e1fe48';
+    $("#channel")[0].value = 'beijing';
+    $("#uid")[0].value = '23882139';
+
+    $(document).ready(function(){
+      $("#listen").click(function(){
+        console.log("listen click event");
+        if ($('video').length > 0) {
+          $("#listen").attr("disabled", true);
+          $('video').click(function (e) { //Offset mouse Position
+            var rect = e.currentTarget.getBoundingClientRect(),
+            offsetX = e.clientX - rect.left,
+            offsetY = e.clientY - rect.top;
+
+            var clickInfo = {};
+            clickInfo.x = offsetX;
+            clickInfo.y = offsetY;
+            clickInfo.width = $(".player")[0].offsetWidth;
+            clickInfo.height = $(".player")[0].offsetHeight;
+            var msgInfo = {};
+            msgInfo.msgType = 3;
+            msgInfo.content = JSON.stringify(clickInfo);
+            var posStr = (offsetX) + ' , ' + (offsetY);
+            
+            console.log(JSON.stringify(msgInfo));
+            client.sendStreamMessage(stringToUint8Array(JSON.stringify(msgInfo)));
+          });
+        }
+      });
+    });
+
+  </script>
+
+  <!--
+    This local media splayer is enabled when the user has successfully joined a Video Call channel.
+  -->
+  <div class="row video-group">
+    <div class="w-100"></div>
+    <div class="col">
+      <div id="remote-playerlist"></div>
+    </div>
+  </div>
+</div>
+
+<!--
+  Import the Agora Video Call SDK for Web and local calls to it.
+-->
+<script src="./assets/bootstrap.bundle.min.js"></script>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+<script src="./basicVideoCall.js"></script>
+</body>
+</html>
