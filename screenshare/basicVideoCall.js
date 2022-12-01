@@ -59,26 +59,26 @@ $(() => {
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
  * by the user.
  */
-$("#join-form").submit(async function (e) {
+$("#container").submit(async function (e) {
   e.preventDefault();
-  $("#join").attr("disabled", true);
+  // $("#join").attr("disabled", true);
   try {
     options.appid = $("#appid").val();
     options.token = $("#token").val();
     options.channel = $("#channel").val();
     options.uid = Number($("#uid").val());
     await join();
-    if(options.token) {
+    if (options.token) {
       $("#success-alert-with-token").css("display", "block");
     } else {
       $("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
       $("#success-alert").css("display", "block");
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   } finally {
-    $("#leave").attr("disabled", false);
-    $("#listen").attr("disabled", false);
+    // $("#leave").attr("disabled", false);
+    // $("#listen").attr("disabled", false);
   }
 })
 
@@ -93,17 +93,17 @@ $("#leave").click(function (e) {
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
 async function join() {
-
+  console.log('testTestTestTest2')
   // Add an event listener to play remote tracks when remote user publishes.
   client.on("user-published", handleUserPublished);
   client.on("user-unpublished", handleUserUnpublished);
 
   // Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-  [ options.uid, localTracks.audioTrack, localTracks.videoTrack ] = await Promise.all([
+  [options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
     // Join the channel.
     client.join(options.appid, options.channel, options.token || null, options.uid || null),
     // Create tracks to the local microphone.
-    AgoraRTC.createMicrophoneAudioTrack()  ]);
+    AgoraRTC.createMicrophoneAudioTrack()]);
 
   // Play the local video track to the local browser and update the UI with the user ID.
   localTracks.videoTrack.play("local-player");
@@ -111,7 +111,7 @@ async function join() {
 
   // Publish the local video and audio tracks to the channel.
   await client.publish(Object.values(localTracks));
-  console.log("publish success");
+  // console.log("publish success");
 }
 
 /*
@@ -120,7 +120,7 @@ async function join() {
 async function leave() {
   for (trackName in localTracks) {
     var track = localTracks[trackName];
-    if(track) {
+    if (track) {
       track.stop();
       track.close();
       localTracks[trackName] = undefined;
@@ -135,10 +135,11 @@ async function leave() {
   await client.leave();
 
   $("#local-player-name").text("");
+
   $("#join").attr("disabled", false);
   $("#leave").attr("disabled", true);
   $("#listen").attr("disabled", true);
-  console.log("client leaves channel success");
+  // console.log("client leaves channel success");
 }
 
 
@@ -152,15 +153,15 @@ async function subscribe(user, mediaType) {
   const uid = user.uid;
   // subscribe to a remote user
   await client.subscribe(user, mediaType);
-  console.log("subscribe success");
+  // console.log("subscribe success");
   if (mediaType === 'video') {
     const player = $(`
-      <div id="player-wrapper-${uid}">
-        <p class="player-name">remoteUser(${uid})</p>
+      <div id="player-wrapper-${uid}" style="width: 100%;height: 100%;">
         <div id="player-${uid}" class="player"></div>
       </div>
     `);
-    $("#remote-playerlist").append(player);
+    $("#container").append(player);
+    // console.log($(".container"))
     user.videoTrack.play(`player-${uid}`);
   }
   if (mediaType === 'audio') {
@@ -190,3 +191,7 @@ function handleUserUnpublished(user) {
   delete remoteUsers[id];
   $(`#player-wrapper-${id}`).remove();
 }
+
+window.addEventListener('load', async function () {
+  $("#join-form").submit();
+})

@@ -9,9 +9,11 @@
   margin: 0;
 }
 
-
-#join-form {
-  margin-top: 10px;
+#container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .tips {
@@ -30,21 +32,11 @@ input {
 }
 
 .player {
-  width: 1280px;
-  height: 720px;
+  width: 100vw;
+  height: 100%;
 }
 
-.player-name {
-  margin: 8px 0;
-}
-
-#success-alert, #success-alert-with-token {
+#success-alert,
+#success-alert-with-token {
   display: none;
-}
-
-@media (max-width: 1280px) {
-  .player {
-    width: 1280px;
-    height: 720px;
-  }
 }
