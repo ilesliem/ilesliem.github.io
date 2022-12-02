@@ -12,7 +12,7 @@
   <style>
     body {
       height: 100vh;
-      width: 100%;
+      width: 100vw;
     }
 
     .container {
@@ -51,16 +51,16 @@
     </button>
   </div>
 
-  <!--
-  When a user successfully joins a Video Call channel with an AccessToken, this section displays
-  a banner with a close button.
--->
-  <div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Congratulations!</strong><span> Joined room successfully. </span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
+<!--  &lt;!&ndash;-->
+<!--  When a user successfully joins a Video Call channel with an AccessToken, this section displays-->
+<!--  a banner with a close button.-->
+<!--&ndash;&gt;-->
+<!--  <div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--    <strong>Congratulations!</strong><span> Joined room successfully. </span>-->
+<!--    <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--      <span aria-hidden="true">&times;</span>-->
+<!--    </button>-->
+<!--  </div>-->
 
   <div class="container" id="container">
 
@@ -96,17 +96,8 @@
         var tmpUint8Array = new Uint8Array(arr);
         return tmpUint8Array
       }
-
-      $("#appid")[0].value = '5c303eba64ae45369aee32cbe2e1fe48';
-      // $("#appid")[0].value = '1f3e45d8c33e4e68b0c27ce1b77e7e8e';
-      $("#channel")[0].value = 'beijing';
-      $("#uid")[0].value = '23882139';
-
-      $(document).ready(function () {
-        $("#listen").click(function () {
-          console.log("listen click event");
+      function Listen() {
           if ($('video').length > 0) {
-            $("#listen").attr("disabled", true);
             $('video').click(function (e) { //Offset mouse Position
               var rect = e.currentTarget.getBoundingClientRect(),
                 offsetX = e.clientX - rect.left,
@@ -126,7 +117,18 @@
               client.sendStreamMessage(stringToUint8Array(JSON.stringify(msgInfo)));
             });
           }
-        });
+
+      }
+
+      $("#appid")[0].value = '5c303eba64ae45369aee32cbe2e1fe48';
+      // $("#appid")[0].value = '1f3e45d8c33e4e68b0c27ce1b77e7e8e';
+      $("#channel")[0].value = 'beijing';
+      $("#uid")[0].value = '23882139';
+
+      $(document).ready(function () {
+        setTimeout(() => {
+          Listen()
+        }, 500)
       });
 
     </script>

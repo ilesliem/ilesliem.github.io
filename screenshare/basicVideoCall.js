@@ -59,9 +59,10 @@ $(() => {
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
  * by the user.
  */
-$("#container").submit(async function (e) {
+$("#join-form").submit(async function (e) {
   e.preventDefault();
-  // $("#join").attr("disabled", true);
+  // console.log('11111111111111111111111')
+  $("#join").attr("disabled", true);
   try {
     options.appid = $("#appid").val();
     options.token = $("#token").val();
@@ -153,7 +154,7 @@ async function subscribe(user, mediaType) {
   const uid = user.uid;
   // subscribe to a remote user
   await client.subscribe(user, mediaType);
-  // console.log("subscribe success");
+  console.log("subscribe success");
   if (mediaType === 'video') {
     const player = $(`
       <div id="player-wrapper-${uid}" style="width: 100%;height: 100%;">
@@ -161,7 +162,6 @@ async function subscribe(user, mediaType) {
       </div>
     `);
     $("#container").append(player);
-    // console.log($(".container"))
     user.videoTrack.play(`player-${uid}`);
   }
   if (mediaType === 'audio') {
